@@ -45,7 +45,7 @@ class _UserTableScreenState extends State<UserTableScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Table'),
+        title: Text('Users'),
       ),
       body: Column(
         children: [
