@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:fitness_dashboard_ui/const/constant.dart';
-import 'package:fitness_dashboard_ui/screens/main_screen.dart';
-import 'package:fitness_dashboard_ui/screens/user_table_screen.dart';
+import 'package:cleanercms/const/constant.dart';
+import 'package:cleanercms/screens/main_screen.dart';
+import 'package:cleanercms/screens/report_screen.dart';
+import 'package:cleanercms/screens/user_table_screen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -35,9 +36,9 @@ class MyApp extends StatelessWidget {
 
       routes: {
         // '/': (context) => HomePage(),
-        // '/dashboard': (context) => DashboardPage(),
+        '/dashboard': (context) => MainScreen(),
         '/users': (context) => UserTableScreen(),
-        // '/reports': (context) => ReportsPage(),
+        '/reports': (context) => ReportTableScreen(),
         // '/pickup_requests': (context) => PickupRequestsPage(),
         // '/schedule': (context) => SchedulePage(),
         // '/signout': (context) => SignOutPage(),

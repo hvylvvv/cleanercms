@@ -1,6 +1,6 @@
 {
-    "name": "fitness_dashboard_ui",
-    "short_name": "fitness_dashboard_ui",
+    "name": "cleanercms",
+    "short_name": "cleanercms",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

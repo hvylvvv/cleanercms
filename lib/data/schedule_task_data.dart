@@ -1,4 +1,4 @@
-import 'package:fitness_dashboard_ui/model/schedule_model.dart';
+import 'package:cleanercms/model/schedule_model.dart';
 
 class ScheduleTasksData {
   final scheduled = const [

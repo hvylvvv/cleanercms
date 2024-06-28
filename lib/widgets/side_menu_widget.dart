@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fitness_dashboard_ui/data/side_menu_data.dart';
+import 'package:cleanercms/data/side_menu_data.dart';
 
 import '../const/constant.dart';
 

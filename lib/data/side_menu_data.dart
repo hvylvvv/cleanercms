@@ -1,4 +1,4 @@
-import 'package:fitness_dashboard_ui/model/menu_model.dart';
+import 'package:cleanercms/model/menu_model.dart';
 import 'package:flutter/material.dart';
 
 
