@@ -22,6 +22,20 @@ class FirestoreService {
     });
   }
 
+  Stream<List<Community>> getCommunityDocuments() {
+    return _db.collection('community posts').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Community.fromJson(data);
+      }).toList();
+    });
+  }
+
+
+  Future<void> addCommunityDocument(Community document) {
+    return _db.collection('community posts').add(document.toJson());
+  }
+
 }
 
 class User {
@@ -98,3 +112,36 @@ class Report {
     );
   }
 }
+
+class Community {
+  final bool Resolved;
+  final String info;
+  final GeoPoint location;
+  final String title;
+
+  Community({
+    required this.Resolved,
+    required this.info,
+    required this.location,
+    required this.title,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      // 'resolved': Resolved,
+      'info': info,
+      'location': location,
+      'title': title,
+    };
+  }
+
+  factory Community.fromJson(Map<String, dynamic> json) {
+    return Community(
+      Resolved: json['resolved'] ?? false,
+      info: json['info'],
+      location: json['location'],
+      title: json['title'],
+    );
+  }
+}
+

@@ -89,7 +89,7 @@ class _ReportTableScreenState extends State<ReportTableScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
                       ),
-                      child: Text('View Map', style: TextStyle(fontSize: 16.0)),
+                      child: Text('Generate Post', style: TextStyle(fontSize: 16.0)),
                     ),
                   ),
                 ],
@@ -98,13 +98,13 @@ class _ReportTableScreenState extends State<ReportTableScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                columnSpacing: 20, // Adjust column spacing as needed
-                headingRowHeight: 40, // Increase the height of heading row
+                columnSpacing: 10, // Adjust column spacing as needed
+                headingRowHeight: 30, // Increase the height of heading row
                 dataRowHeight: 180, // Increase the height of data rows
                 columns: [
                   DataColumn(label: Text('Report Type')),
                   DataColumn(label: Text('Additional Info')),
-                  DataColumn(label: Text('Address')),
+                  DataColumn(label: Text('GeoLocation')),
                   DataColumn(label: Text('Timestamp')),
                   DataColumn(label: Text('Image URLs')), // Add column for Image URLs
                 ],
