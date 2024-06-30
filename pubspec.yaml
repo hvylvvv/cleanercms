@@ -20,7 +20,10 @@ dependencies:
   firebase_auth: ^5.1.1 # If you plan to use Firebase Authentication
   cloud_firestore: ^5.0.2
   url_launcher: ^6.0.20
+
   flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  location_picker_flutter_map: ^3.0.1
 
 dev_dependencies:
   flutter_test:

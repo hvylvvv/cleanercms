@@ -7,6 +7,12 @@ import 'package:flutter/material.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
+  static void showSubmissionMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Post Submitted')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDesktop = Responsive.isDesktop(context);
@@ -14,32 +20,30 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       drawer: !isDesktop
           ? const SizedBox(
-              width: 250,
-              child: SideMenuWidget(),
-            )
+        width: 250,
+        child: SideMenuWidget(),
+      )
           : null,
       endDrawer: Responsive.isMobile(context)
           ? SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: const SummaryWidget(),
-            )
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: const SummaryWidget(),
+      )
           : null,
       body: SafeArea(
         child: Row(
           children: [
             if (isDesktop)
-              Expanded(
+              const Expanded(
                 flex: 2,
-                child: SizedBox(
-                  child: SideMenuWidget(),
-                ),
+                child: SideMenuWidget(),
               ),
-            Expanded(
+            const Expanded(
               flex: 7,
               child: DashboardWidget(),
             ),
             if (isDesktop)
-              Expanded(
+              const Expanded(
                 flex: 3,
                 child: SummaryWidget(),
               ),

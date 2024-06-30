@@ -80,18 +80,18 @@ class _ReportTableScreenState extends State<ReportTableScreen> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => NewReportScreen()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-                      ),
-                      child: Text('Generate Post', style: TextStyle(fontSize: 16.0)),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       // Navigator.push(context, MaterialPageRoute(builder: (context) => NewReportScreen()));
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  //     ),
+                  //     child: Text('Generate Post', style: TextStyle(fontSize: 16.0)),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
