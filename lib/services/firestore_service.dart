@@ -32,13 +32,10 @@ class FirestoreService {
     });
   }
 
-  Stream<List<Community>> getPickupDocuments() {
-    return _db.collection('pickups').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return Community.fromJson(data);
-      }).toList();
-    });
+  Stream<List<Pickup>> getPickupDocuments() {
+    return _db.collection('pickups').snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => Pickup.fromJson(doc.data() as Map<String, dynamic>)).toList()
+    );
   }
 
 
@@ -151,6 +148,54 @@ class Community {
       info: json['info'],
       location: json['location'],
       title: json['title'],
+    );
+  }
+}
+
+class Pickup {
+  final String additionalInfo;
+  final String date;
+  final String pickupId;
+  final String pickupType;
+  final bool receiveUpdates;
+  final String time;
+  final String userId;
+  final String userName;
+
+  Pickup({
+    required this.additionalInfo,
+    required this.date,
+    required this.pickupId,
+    required this.pickupType,
+    required this.receiveUpdates,
+    required this.time,
+    required this.userId,
+    required this.userName,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'additionalInfo': additionalInfo,
+      'date': date,
+      'pickupId': pickupId,
+      'pickupType': pickupType,
+      'receiveUpdates': receiveUpdates,
+      'time': time,
+      'userId': userId,
+      'userName': userName,
+    };
+  }
+
+  factory Pickup.fromJson(Map<String, dynamic> json) {
+    return Pickup(
+      additionalInfo: json['additionalInfo'] ?? '',
+      date: json['date'] ?? '',
+      pickupId: json['pickupId'] ?? '',
+      pickupType: json['pickupType'] ?? '',
+      receiveUpdates: json['receiveUpdates'] ?? false,
+      time: json['time'] ?? '',
+      userId: json['userId'] ?? '',
+      userName: json['userName'] ?? '',
     );
   }
 }
