@@ -7,6 +7,11 @@
 - SORT PICKUP REQUESTS
 - FIGURE OUT SCHEDULE
 - ADD DATA TO DASHBOARD 
+- pickup search to be fixed
+- add map button to community page 
+
 
 Done?
 - GENERATE NEW community POST
+- map page shows reports
+- pickup page shows values

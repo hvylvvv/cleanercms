@@ -78,10 +78,10 @@ class _PickupScreenState extends State<PickupScreen> {
                     columns: const [
                       DataColumn(label: Text('User')),
                       DataColumn(label: Text('Pickup Type')),
-                      DataColumn(label: Text('Additional Info')),
                       DataColumn(label: Text('Date & Time')),
                       // DataColumn(label: Text('Time')),
                       DataColumn(label: Text('Receive Updates')),
+                      DataColumn(label: Text('Additional Info')),
 
                     ],
                     rows: documents.map((doc) {
@@ -102,14 +102,7 @@ class _PickupScreenState extends State<PickupScreen> {
                             ),
                           ),
                         ),
-                        DataCell(
-                          Container(
-                            width: 300, // Set the desired width
-                            child: Wrap(
-                              children: [Text(doc.additionalInfo)],
-                            ),
-                          ),
-                        ),
+
                         DataCell(
                           Container(
                             width: 150, // Set the desired width
@@ -128,9 +121,17 @@ class _PickupScreenState extends State<PickupScreen> {
                         // ),
                         DataCell(
                           Container(
-                            width: 100, // Set the desired width
+                            width: 200, // Set the desired width
                             child: Wrap(
                               children: [Text(doc.receiveUpdates ? 'Yes' : 'No')],
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Container(
+                            width: 300, // Set the desired width
+                            child: Wrap(
+                              children: [Text(doc.additionalInfo)],
                             ),
                           ),
                         ),
