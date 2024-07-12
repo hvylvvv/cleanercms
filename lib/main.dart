@@ -1,10 +1,13 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cleanercms/const/constant.dart';
 import 'package:cleanercms/screens/main_screen.dart';
 import 'package:cleanercms/screens/report_screen.dart';
 import 'package:cleanercms/screens/user_table_screen.dart';
 import 'package:cleanercms/screens/Community.dart';
+import 'package:cleanercms/screens/pickup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cleanercms/screens/community_map_screen.dart';
 
 
 void main() async {
@@ -36,14 +39,12 @@ class MyApp extends StatelessWidget {
       title: 'Cleaner CMS',
 
       routes: {
-        // '/': (context) => HomePage(),
         '/dashboard': (context) => MainScreen(),
         '/users': (context) => UserTableScreen(),
         '/reports': (context) => ReportTableScreen(),
         '/community': (context) => CommunityScreen(),
-        // '/pickup_requests': (context) => PickupRequestsPage(),
-        // '/schedule': (context) => SchedulePage(),
-        // '/signout': (context) => SignOutPage(),
+        '/map': (context) => ReportMap(),
+        '/pickup_requests': (context) => PickupScreen(),
       },
       initialRoute: '/',
 

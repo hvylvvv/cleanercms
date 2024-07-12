@@ -1,3 +1,4 @@
+// import 'package:cleanercms/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
@@ -24,6 +25,15 @@ class FirestoreService {
 
   Stream<List<Community>> getCommunityDocuments() {
     return _db.collection('community posts').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Community.fromJson(data);
+      }).toList();
+    });
+  }
+
+  Stream<List<Community>> getPickupDocuments() {
+    return _db.collection('pickups').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return Community.fromJson(data);
@@ -144,4 +154,3 @@ class Community {
     );
   }
 }
-

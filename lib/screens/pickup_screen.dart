@@ -1,31 +1,24 @@
-import 'package:cleanercms/screens/new_post_screen.dart';
 import 'package:cleanercms/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
-class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+class PickupScreen extends StatefulWidget {
+  const PickupScreen({super.key});
 
   @override
-  State<CommunityScreen> createState() => _CommunityScreenState();
+  State<PickupScreen> createState() => _PickupScreenState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> {
-  final _firestoreService = FirestoreService();
-  String _searchQuery = '';
+class _PickupScreenState extends State<PickupScreen> {
+    final _firestoreService = FirestoreService();
+    String _searchQuery = '';
 
-  void _createNewPost() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => NewPostScreen()),
-    );
-  }
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Pickup Requests'),
+        ),
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Community Posts'),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -50,22 +43,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     ),
                   ),
                   SizedBox(width: 8.0),
-                  ElevatedButton(
-                    onPressed: _createNewPost,
-                    child: Text('New Post'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: _createNewPost,
+                  //   child: Text('New Post'),
+                  // ),
                 ],
               ),
             ),
             SizedBox(height: 8.0),
             StreamBuilder<List<Community>>(
-              stream: _firestoreService.getCommunityDocuments(),
+              stream: _firestoreService.getPickupDocuments(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No community documents found'));
+                  return Center(child: Text('No pickups found'));
                 }
                 final documents = snapshot.data!.where((doc) {
                   return doc.title.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -127,5 +120,4 @@ class _CommunityScreenState extends State<CommunityScreen> {
         ),
       ),
     );
-  }
-}
+  }}

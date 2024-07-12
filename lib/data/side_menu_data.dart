@@ -8,8 +8,9 @@ class SideMenuData {
     MenuModel(icon: Icons.person, title: 'Users'),
     MenuModel(icon: Icons.report, title: 'Reports'),
     MenuModel(icon: Icons.chat_bubble, title: 'Community'),
+    MenuModel(icon: Icons.location_pin, title: 'Map'),
     MenuModel(icon: Icons.local_shipping, title: 'Pickup Requests'),
     MenuModel(icon: Icons.calendar_month, title: 'Schedule'),
-    MenuModel(icon: Icons.logout, title: 'SignOut'),
+    MenuModel(icon: Icons.logout, title: 'Sign Out'),
   ];
 }

@@ -70,12 +70,15 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
             navigateToPage('/community');
             break;
           case 4:
-            navigateToPage('/pickup_requests');
+            navigateToPage('/map');
             break;
           case 5:
-            navigateToPage('/schedule');
+            navigateToPage('/pickup_requests');
             break;
           case 6:
+            navigateToPage('/schedule');
+            break;
+          case 7:
             navigateToPage('/signout');
             break;
           default:
