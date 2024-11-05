@@ -1,4 +1,5 @@
 
+import 'package:cleanercms/screens/schedule_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cleanercms/const/constant.dart';
 import 'package:cleanercms/screens/main_screen.dart';
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
         '/community': (context) => CommunityScreen(),
         '/map': (context) => ReportMap(),
         '/pickup_requests': (context) => PickupScreen(),
+        '/schedule': (context) => SchedulePage(),
+
       },
       initialRoute: '/',
 

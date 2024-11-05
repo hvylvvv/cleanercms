@@ -136,7 +136,7 @@ class _ReportMapState extends State<ReportMap> {
 
               ),
               PolylineLayer(
-                polylineCulling: false,
+                // polylineCulling: false,
                 polylines: [
                   Polyline(
                     points: points,
@@ -169,27 +169,29 @@ class _ReportMapState extends State<ReportMap> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           const SizedBox(height: 10),
-          FloatingActionButton(
-            backgroundColor: Colors.black,
-            onPressed: () {
-              mapController.move(mapController.center, mapController.zoom + 1);
-            },
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            backgroundColor: Colors.black,
-            onPressed: () {
-              mapController.move(mapController.center, mapController.zoom - 1);
-            },
-            child: const Icon(
-              Icons.remove,
-              color: Colors.white,
-            ),
-          ),
+          // FloatingActionButton(
+          //   heroTag: 'ZoomInFAB',
+          //   backgroundColor: Colors.black,
+          //   onPressed: () {
+          //     mapController.move(mapController.center, mapController.zoom + 1);
+          //   },
+          //   child: const Icon(
+          //     Icons.add,
+          //     color: Colors.white,
+          //   ),
+          // ),
+          // const SizedBox(height: 10),
+          // FloatingActionButton(
+          //   heroTag: 'ZoomOutFAB',
+          //   backgroundColor: Colors.black,
+          //   onPressed: () {
+          //     mapController.move(mapController.center, mapController.zoom - 1);
+          //   },
+          //   child: const Icon(
+          //     Icons.remove,
+          //     color: Colors.white,
+          //   ),
+          // ),
         ],
       ),
     );

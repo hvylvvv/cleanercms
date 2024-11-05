@@ -15,3 +15,5 @@ Done?
 - GENERATE NEW community POST
 - map page shows reports
 - pickup page shows values
+
+

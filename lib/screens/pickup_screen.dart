@@ -1,6 +1,8 @@
-// import 'package:cleanercms/screens/new_pickup_screen.dart';
-import 'package:cleanercms/services/firestore_service.dart';
+
+
+
 import 'package:flutter/material.dart';
+import '../services/firestore_service.dart';
 
 class PickupScreen extends StatefulWidget {
   const PickupScreen({super.key});
@@ -10,141 +12,94 @@ class PickupScreen extends StatefulWidget {
 }
 
 class _PickupScreenState extends State<PickupScreen> {
-  final _firestoreService = FirestoreService();
-  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  final FirestoreService _firestoreService = FirestoreService();
+  List<Pickup> _pickups = [];
+  List<Pickup> _filteredPickups = [];
 
-  // void _createNewPickup() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => NewPickupScreen()),
-  //   );
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _fetchPickups();
+  }
+
+  void _fetchPickups() {
+    _firestoreService.getPickupDocuments().listen((pickups) {
+      setState(() {
+        _pickups = pickups;
+        _filteredPickups = _pickups;
+      });
+    });
+  }
+
+  void _filterPickups(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredPickups = _pickups;
+      } else {
+        _filteredPickups = _pickups.where((pickup) =>
+        pickup.pickupType.toLowerCase().contains(query.toLowerCase()) ||
+            pickup.userName.toLowerCase().contains(query.toLowerCase())
+        ).toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pickup Requests'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _fetchPickups,
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
-                  // ElevatedButton(
-                  //   onPressed: (){},
-                  //   child: Text('New Pickup'),
-                  // ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search',
+                hintText: 'Search by type or user',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: _filterPickups,
+            ),
+          ),
+          Expanded(
+            child: _filteredPickups.isEmpty
+                ? Center(child: Text('No pickup requests found'))
+                : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('User')),
+                  DataColumn(label: Text('Pickup Type')),
+                  DataColumn(label: Text('Date & Time')),
+                  DataColumn(label: Text('Receive Updates?')),
+                  DataColumn(label: Text('Additional Information')),
                 ],
+                rows: _filteredPickups.map((pickup) {
+                  return DataRow(cells: [
+                    DataCell(Text(pickup.userName)),
+                    DataCell(Text(pickup.pickupType)),
+                    DataCell(Text('${pickup.date}, ${pickup.time}')),
+                    DataCell(Text(pickup.receiveUpdates ? 'Yes' : 'No')),
+                    DataCell(Text(pickup.additionalInfo)),
+                  ]);
+                }).toList(),
               ),
             ),
-            SizedBox(height: 8.0),
-            StreamBuilder<List<Pickup>>(
-              stream: _firestoreService.getPickupDocuments(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No pickup requests found'));
-                }
-                final documents = snapshot.data!.where((doc) {
-                  return doc.pickupType.toLowerCase().contains(_searchQuery.toLowerCase());
-                }).toList();
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columnSpacing: 10.0,
-                    horizontalMargin: 10.0,
-                    columns: const [
-                      DataColumn(label: Text('User')),
-                      DataColumn(label: Text('Pickup Type')),
-                      DataColumn(label: Text('Date & Time')),
-                      // DataColumn(label: Text('Time')),
-                      DataColumn(label: Text('Receive Updates')),
-                      DataColumn(label: Text('Additional Info')),
-
-                    ],
-                    rows: documents.map((doc) {
-                      return DataRow(cells: [
-                        DataCell(
-                          Container(
-                            width: 150, // Set the desired width
-                            child: Wrap(
-                              children: [Text(doc.userName)],
-                            ),
-                          ),
-                        ),
-                        DataCell(
-                          Container(
-                            width: 200, // Set the desired width
-                            child: Wrap(
-                              children: [Text(doc.pickupType)],
-                            ),
-                          ),
-                        ),
-
-                        DataCell(
-                          Container(
-                            width: 150, // Set the desired width
-                            child: Wrap(
-                              children: [Text('${doc.date}, ${doc.time}')],
-                            ),
-                          ),
-                        ),
-                        // DataCell(
-                        //   Container(
-                        //     width: 100, // Set the desired width
-                        //     child: Wrap(
-                        //       children: [Text(doc.time)],
-                        //     ),
-                        //   ),
-                        // ),
-                        DataCell(
-                          Container(
-                            width: 200, // Set the desired width
-                            child: Wrap(
-                              children: [Text(doc.receiveUpdates ? 'Yes' : 'No')],
-                            ),
-                          ),
-                        ),
-                        DataCell(
-                          Container(
-                            width: 300, // Set the desired width
-                            child: Wrap(
-                              children: [Text(doc.additionalInfo)],
-                            ),
-                          ),
-                        ),
-
-                      ]);
-                    }).toList(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+

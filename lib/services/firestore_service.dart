@@ -17,7 +17,7 @@ class FirestoreService {
   Stream<List<Report>> getReports() {
     return _db.collection('reports').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         return Report.fromJson(data);
       }).toList();
     });
@@ -26,7 +26,7 @@ class FirestoreService {
   Stream<List<Community>> getCommunityDocuments() {
     return _db.collection('community posts').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         return Community.fromJson(data);
       }).toList();
     });
@@ -34,7 +34,7 @@ class FirestoreService {
 
   Stream<List<Pickup>> getPickupDocuments() {
     return _db.collection('pickups').snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => Pickup.fromJson(doc.data() as Map<String, dynamic>)).toList()
+        snapshot.docs.map((doc) => Pickup.fromJson(doc.data())).toList()
     );
   }
 
@@ -42,6 +42,26 @@ class FirestoreService {
   Future<void> addCommunityDocument(Community document) {
     return _db.collection('community posts').add(document.toJson());
   }
+
+  Future<void> addUser(String uid, Map<String, dynamic> userData) {
+    return FirebaseFirestore.instance.collection('users').doc(uid).set(userData);
+  }
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> updateUser(String userId, Map<String, dynamic> updatedData) async {
+    try {
+      await _firestore.collection('users').doc(userId).update(updatedData);
+      print('User updated successfully');
+    } catch (e) {
+      print('Error updating user: $e');
+      throw e; // Optionally, rethrow for error handling
+    }
+  }
+
+
+
+
 
 }
 
@@ -53,7 +73,8 @@ class User {
   final String addressLine1;
   final String addressParish;
   final String addressSuburb;
-  final String password;
+  final String addressNeighbourhood;
+  // final String password;
   final String phone;
   final String uid;
 
@@ -65,7 +86,8 @@ class User {
     required this.addressLine1,
     required this.addressParish,
     required this.addressSuburb,
-    required this.password,
+    required this.addressNeighbourhood,
+    // required this.password,
     required this.phone,
     required this.uid,
   });
@@ -79,7 +101,8 @@ class User {
       addressLine1: json['AddressLine1'],
       addressParish: json['AddressParish'],
       addressSuburb: json['AddressSuburb'],
-      password: json['Password'],
+      addressNeighbourhood: json['AddressNeighbourhood'],
+      // password: json['Password'],
       phone: json['Phone'],
       uid: json['UserID'],
     );

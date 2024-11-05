@@ -1,12 +1,8 @@
-
-
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
-
 
 class ReportMap extends StatefulWidget {
   const ReportMap({super.key});
@@ -16,25 +12,21 @@ class ReportMap extends StatefulWidget {
 }
 
 class _ReportMapState extends State<ReportMap> {
-
   late LatLng myPoint;
   bool isLoading = false;
   List<Marker> markers = [];
   List<Marker> fetchedMarkers = [];
+  LatLng currentCenter = LatLng(17.9831, -76.7841);
+  double currentZoom = 12.5;
 
   Future<void> fetchMarkers() async {
-    print('hi');
     setState(() {
       isLoading = true;
-      print('hi state');
     });
 
-    try{
+    try {
       final querySnapshot = await FirebaseFirestore.instance.collection('community posts').get();
-      print('hi snapshot');
-      // List<Marker> fetchedMarkers = [];
-
-      querySnapshot.docs.forEach((document){
+      querySnapshot.docs.forEach((document) {
         GeoPoint geoPoint = document.data()['location'];
         double latitude = geoPoint.latitude;
         double longitude = geoPoint.longitude;
@@ -44,13 +36,11 @@ class _ReportMapState extends State<ReportMap> {
         String description = document.data()['info'] ?? '';
         bool resolved = document.data()['Resolved'] ?? false;
 
-
         fetchedMarkers.add(
           Marker(
             width: 80.0,
             height: 80.0,
             point: position,
-            // Replace builder with child and GestureDetector
             child: GestureDetector(
               onTap: () {
                 showDialog(
@@ -76,15 +66,11 @@ class _ReportMapState extends State<ReportMap> {
               ),
             ),
           ),
-
         );
-        print(fetchedMarkers.toString());
       });
     } catch (e) {
       print('Error fetching markers: $e');
-      return ;
-    }
-    finally {
+    } finally {
       setState(() {
         isLoading = false;
         markers = fetchedMarkers;
@@ -92,19 +78,11 @@ class _ReportMapState extends State<ReportMap> {
     }
   }
 
-
   @override
   void initState() {
-    myPoint = defaultPoint;
     super.initState();
     fetchMarkers();
   }
-
-  LatLng defaultPoint = LatLng(17.9831,-76.7841);
-
-  List listOfPoints = [];
-  List<LatLng> points = [];
-  // List<Marker> markers = [] ;
 
   final MapController mapController = MapController();
 
@@ -112,20 +90,16 @@ class _ReportMapState extends State<ReportMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
-      // appBar: const CleanerAppBar(title: 'CLEANER+'),
-      // endDrawer: Navbar(),
       appBar: AppBar(
         title: Text('Map'),
       ),
-
       body: Stack(
         children: [
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              initialZoom: 13,
-              initialCenter: myPoint,
-              // onTap: (tapPosition, latLng) => _handleTap(latLng),
+              initialZoom: currentZoom,
+              initialCenter: currentCenter,
             ),
             children: [
               TileLayer(
@@ -133,20 +107,7 @@ class _ReportMapState extends State<ReportMap> {
                 userAgentPackageName: 'dev.fleaflet.flutter_map.example',
               ),
               MarkerLayer(
-
                 markers: markers,
-                // markers: fetchMarkers(),
-
-              ),
-              PolylineLayer(
-                polylineCulling: false,
-                polylines: [
-                  Polyline(
-                    points: points,
-                    color: Colors.black,
-                    strokeWidth: 5,
-                  ),
-                ],
               ),
             ],
           ),
@@ -164,8 +125,6 @@ class _ReportMapState extends State<ReportMap> {
               ),
             ),
           ),
-
-
         ],
       ),
       floatingActionButton: Column(
@@ -175,7 +134,8 @@ class _ReportMapState extends State<ReportMap> {
           FloatingActionButton(
             backgroundColor: Colors.black,
             onPressed: () {
-              mapController.move(mapController.center, mapController.zoom + 1);
+              currentZoom += 1; // Increase zoom level
+              mapController.move(currentCenter, currentZoom);
             },
             child: const Icon(
               Icons.add,
@@ -186,7 +146,10 @@ class _ReportMapState extends State<ReportMap> {
           FloatingActionButton(
             backgroundColor: Colors.black,
             onPressed: () {
-              mapController.move(mapController.center, mapController.zoom - 1);
+              if (currentZoom > 1) {
+                currentZoom -= 1; // Decrease zoom level
+                mapController.move(currentCenter, currentZoom);
+              }
             },
             child: const Icon(
               Icons.remove,
@@ -198,5 +161,3 @@ class _ReportMapState extends State<ReportMap> {
     );
   }
 }
-
-

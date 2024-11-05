@@ -1,6 +1,7 @@
 import 'package:cleanercms/screens/new_post_screen.dart';
 import 'package:cleanercms/services/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -18,6 +19,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
       context,
       MaterialPageRoute(builder: (context) => NewPostScreen()),
     );
+  }
+
+  Future<void> _openOpenStreetMap(double latitude, double longitude) async {
+    final urlString = 'https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=17/$latitude/$longitude';
+    final Uri url = Uri.parse(urlString);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -52,7 +64,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   SizedBox(width: 8.0),
                   ElevatedButton(
                     onPressed: _createNewPost,
-                    child: Text('New Post'),
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
                   ),
                 ],
               ),
@@ -70,6 +85,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 final documents = snapshot.data!.where((doc) {
                   return doc.title.toLowerCase().contains(_searchQuery.toLowerCase());
                 }).toList();
+
+                if (documents.isEmpty) {
+                  return Center(child: Text('No posts found'));
+                }
+
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
@@ -85,7 +105,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       return DataRow(cells: [
                         DataCell(
                           Container(
-                            width: 350, // Set the desired width
+                            width: 300,
                             child: Wrap(
                               children: [Text(doc.title)],
                             ),
@@ -93,25 +113,24 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         ),
                         DataCell(
                           Container(
-                            width: 500, // Set the desired width
+                            width: 500,
                             child: Wrap(
                               children: [Text(doc.info)],
                             ),
                           ),
                         ),
                         DataCell(
-                          Container(
-                            width: 200, // Set the desired width
-                            child: Wrap(
-                              children: [
-                                Text('${doc.location.latitude}, ${doc.location.longitude}')
-                              ],
+                          InkWell(
+                            onTap: () => _openOpenStreetMap(doc.location.latitude, doc.location.longitude),
+                            child: Text(
+                              '${doc.location.latitude}, ${doc.location.longitude}',
+                              style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                             ),
                           ),
                         ),
                         DataCell(
                           Container(
-                            width: 100, // Set the desired width
+                            width: 90,
                             child: Wrap(
                               children: [Text(doc.Resolved ? 'Yes' : 'No/Not Applicable')],
                             ),

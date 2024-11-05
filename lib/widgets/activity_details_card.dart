@@ -1,4 +1,4 @@
-// import 'package:cleanercms/data/health_details.dart';
+// import 'package:cleanercms/data/title_cards.dart';
 // import 'package:cleanercms/util/responsive.dart';
 // import 'package:cleanercms/widgets/custom_card_widget.dart';
 // import 'package:flutter/material.dart';
@@ -50,7 +50,7 @@
 //   }
 // }
 
-import 'package:cleanercms/data/health_details.dart';
+import 'package:cleanercms/data/title_cards.dart';
 import 'package:cleanercms/util/responsive.dart';
 import 'package:cleanercms/widgets/custom_card_widget.dart';
 import 'package:flutter/material.dart';

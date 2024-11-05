@@ -37,18 +37,39 @@ class _NewPostScreenState extends State<NewPostScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Create a new community post here. You must fill in a title and details before selecting the location.',
+              style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+            ),
+            SizedBox(height: 24.0),
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.title),
+              ),
             ),
+            SizedBox(height: 16.0),
             TextField(
               controller: _infoController,
-              decoration: InputDecoration(labelText: 'Info'),
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Details',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.info_outline),
+              ),
             ),
+            SizedBox(height: 16.0),
             Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Resolved:'),
+                Text(
+                  'Resolved:',
+                  style: TextStyle(fontSize: 16.0),
+                ),
                 Checkbox(
                   value: _resolved,
                   onChanged: (bool? value) {
@@ -60,9 +81,16 @@ class _NewPostScreenState extends State<NewPostScreen> {
               ],
             ),
             SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _navigateToMap,
-              child: Text('Select Location'),
+            Align(
+              alignment: Alignment.center,
+              child: ElevatedButton.icon(
+                onPressed: _navigateToMap,
+                icon: Icon(Icons.location_pin),
+                label: Text('Select Location'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0), // Adjusted padding for a smaller button
+                ),
+              ),
             ),
           ],
         ),
