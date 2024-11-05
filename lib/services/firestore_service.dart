@@ -44,12 +44,14 @@ class FirestoreService {
   }
 
   Future<void> addUser(String uid, Map<String, dynamic> userData) {
-    return FirebaseFirestore.instance.collection('users').doc(uid).set(userData);
+    return FirebaseFirestore.instance.collection('users').doc(uid).set(
+        userData);
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> updateUser(String userId, Map<String, dynamic> updatedData) async {
+  Future<void> updateUser(String userId,
+      Map<String, dynamic> updatedData) async {
     try {
       await _firestore.collection('users').doc(userId).update(updatedData);
       print('User updated successfully');
@@ -60,10 +62,24 @@ class FirestoreService {
   }
 
 
+  // Future<void> deleteUser(String userId) async {
+  //   try {
+  //     // Delete the user document from Firestore
+  //     await _db.collection('users').doc(userId).delete();
+  //     print("User deleted successfully");
+  //   }
+  //   catch (e) {
+  //     print("Error deleting user: $e");
+  //   }
+  // }
 
-
+  Future<void> deleteUser(String userId) async {
+    return await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+  }
 
 }
+
+
 
 class User {
   final String name;

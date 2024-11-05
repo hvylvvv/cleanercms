@@ -215,6 +215,24 @@ class _UserTableScreenState extends State<UserTableScreen> {
     }
   }
 
+  Future<void> _deleteUser(String userId) async {
+    try {
+      // Delete the user from Firestore
+      await _firestoreService.deleteUser(userId);
+
+      // Delete the user from Firebase Authentication
+      auth.User? user = auth.FirebaseAuth.instance.currentUser;
+      if (user != null && user.uid == userId) {
+        await user.delete();
+      }
+
+      _fetchUsers(); // Refresh the list after deletion
+    } catch (e) {
+      print('Error deleting user: $e');
+    }
+  }
+
+
 
 
 
@@ -257,48 +275,121 @@ class _UserTableScreenState extends State<UserTableScreen> {
                 ? Center(child: Text('No users found'))
                 : SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: DataTable(
+              child:
+              DataTable(
+                columnSpacing: 8.0, // Reduces space between columns
+                dataRowHeight: 40.0, // Reduces row height
+                headingRowHeight: 40.0, // Reduces header row height
                 columns: [
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Email')),
-                  DataColumn(label: Text('Address')),
-                  DataColumn(label: Text('Geolocation')),
-                  DataColumn(label: Text('Phone')),
+                  DataColumn(
+                    label: Text(
+                      'Name',
+                      style: TextStyle(fontSize: 12.0), // Smaller font size
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'Email',
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'Address',
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'Geolocation',
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'Phone',
+                      style: TextStyle(fontSize: 12.0),
+                    ),
+                  ),
+                  DataColumn(label: Text('')),
                   DataColumn(label: Text('')),
                 ],
                 rows: _filteredUsers.map((user) {
-                  final latLongString = user.addressLatLong; // This should be the string format "latitude,longitude"
+                  final latLongString = user.addressLatLong;
                   final latLongList = latLongString.split(',');
 
                   final latitude = double.tryParse(latLongList[0].trim()) ?? 0.0;
                   final longitude = double.tryParse(latLongList[1].trim()) ?? 0.0;
 
-                  return DataRow(cells: [
-                    DataCell(Text(user.name)),
-                    DataCell(Text(user.email)),
-                    DataCell(Text('${user.addressLine1}, ${user.addressParish}, ${user.addressSuburb}')),
-                    DataCell(
-                      InkWell(
-                        onTap: () => _openOpenStreetMap(latitude, longitude),
-                        child: Text(
-                          '${user.addressLatLong}',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(
+                        user.name,
+                        style: TextStyle(fontSize: 12.0), // Smaller font size
+                      )),
+                      DataCell(Text(
+                        user.email,
+                        style: TextStyle(fontSize: 12.0),
+                      )),
+                      DataCell(Text(
+                        '${user.addressLine1}, ${user.addressParish}, ${user.addressSuburb}',
+                        style: TextStyle(fontSize: 12.0),
+                      )),
+                      DataCell(
+                        InkWell(
+                          onTap: () => _openOpenStreetMap(latitude, longitude),
+                          child: Text(
+                            '${user.addressLatLong}',
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    DataCell(Text(user.phone)),
-                    DataCell(
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _showEditUserDialog(context, user),
+                      DataCell(Text(
+                        user.phone,
+                        style: TextStyle(fontSize: 12.0),
+                      )),
+                      DataCell(
+                        IconButton(
+                          icon: Icon(Icons.edit, size: 16.0), // Smaller icon size
+                          onPressed: () => _showEditUserDialog(context, user),
+                        ),
                       ),
-                    ),
-                  ]);
+                      DataCell(
+                        IconButton(
+                          icon: Icon(Icons.delete, size: 16.0),
+                          onPressed: () async {
+                            final confirmDelete = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Delete User'),
+                                content: Text('Are you sure you want to delete this user?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmDelete == true) {
+                              await _deleteUser(user.uid);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
                 }).toList(),
-              ),
+              )
+
             ),
           ),
         ],
