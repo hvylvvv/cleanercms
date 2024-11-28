@@ -11,6 +11,7 @@ class SchedulePage extends StatefulWidget {
   _SchedulePageState createState() => _SchedulePageState();
 }
 
+
 class _SchedulePageState extends State<SchedulePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _searchController = TextEditingController();
@@ -117,7 +118,7 @@ class _SchedulePageState extends State<SchedulePage> {
               ],
             ),
           ),
-          // Text('hi'),
+
           Expanded(
             child: _isLoading // Show loading indicator while fetching data
                 ? const Center(child: CircularProgressIndicator())
@@ -131,7 +132,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   child: DataTable(
                     columnSpacing: 20,
                     columns: const [
-                      DataColumn(label: Text('Street Name')),
+                      DataColumn(label: Text('Location')),
                       DataColumn(label: Text('Zone')),
                       DataColumn(label: Text('Pickup Days')),
                     ],
@@ -164,4 +165,3 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 }
-

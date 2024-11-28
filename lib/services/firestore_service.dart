@@ -23,6 +23,16 @@ class FirestoreService {
     });
   }
 
+  Future<void> updateReportStatus(String reportId, bool isRead) async {
+    try {
+      await _db.collection('reports').doc(reportId).update({
+        'read': isRead,  // Set the read status to the value passed
+      });
+    } catch (e) {
+      print('Error updating report status: $e');
+    }
+  }
+
   Stream<List<Community>> getCommunityDocuments() {
     return _db.collection('community posts').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -39,9 +49,23 @@ class FirestoreService {
   }
 
 
-  Future<void> addCommunityDocument(Community document) {
-    return _db.collection('community posts').add(document.toJson());
+  // Future<void> addCommunityDocument(Community document) {
+  //   return _db.collection('community posts').add(document.toJson());
+  // }
+  Future<void> addCommunityDocument(Community document) async {
+    // Add the document to the Firestore collection and get the reference
+    var docRef = await _db.collection('community posts').add(document.toJson());
+
+    // Get the generated ID from Firestore
+    String generatedId = docRef.id;
+
+    // Optionally, update the document with the generated ID if you need to store it in the model
+    document.cid = generatedId;
+
+    // If you want to update the document after adding it, you can do:
+    await docRef.update({'id': generatedId});
   }
+
 
   Future<void> addUser(String uid, Map<String, dynamic> userData) {
     return FirebaseFirestore.instance.collection('users').doc(uid).set(
@@ -62,20 +86,45 @@ class FirestoreService {
   }
 
 
-  // Future<void> deleteUser(String userId) async {
-  //   try {
-  //     // Delete the user document from Firestore
-  //     await _db.collection('users').doc(userId).delete();
-  //     print("User deleted successfully");
-  //   }
-  //   catch (e) {
-  //     print("Error deleting user: $e");
-  //   }
-  // }
-
   Future<void> deleteUser(String userId) async {
     return await FirebaseFirestore.instance.collection('users').doc(userId).delete();
   }
+
+  // Future<void> updateReportAgency(String reportID, String? agency) async {
+  //   await _firestore.collection('reports').doc(reportID).update({
+  //     'agency': agency,  // Update the agency field
+  //   });
+  // }
+  Future<void> updateReportAgency(String reportID, String? agency) async {
+    try {
+      await FirebaseFirestore.instance.collection('reports').doc(reportID).update({
+        'agency': agency, // Update the 'agency' field with the new value
+      });
+    } catch (e) {
+      print('Error updating agency: $e');
+    }
+  }
+
+  Future<void> updateResolvedStatus(String postId, bool newResolvedStatus) async {
+    try {
+      await FirebaseFirestore.instance.collection('community posts').doc(postId).update({
+        'resolved': newResolvedStatus,
+      });
+    } catch (e) {
+      print("Error updating resolved status: $e");
+    }
+  }
+
+  Future<void> updatePickupStatus(String pickupId, String status) async {
+    try {
+      await _db.collection('pickups').doc(pickupId).update({
+        'status': status, // Update the status field with the new value
+      });
+    } catch (e) {
+      print("Error updating pickup status: $e");
+    }
+  }
+
 
 }
 
@@ -134,6 +183,9 @@ class Report {
   final List<String> imageUrls;
   final bool receiveUpdates;
   final DateTime timestamp;
+  final bool read;
+  String? agency;
+
 
   Report({
     required this.reportID,
@@ -143,6 +195,9 @@ class Report {
     required this.imageUrls,
     required this.receiveUpdates,
     required this.timestamp,
+    required this.read,
+    this.agency,
+
   });
 
   // Add a factory method to create a Report from a Firestore document
@@ -155,6 +210,8 @@ class Report {
       imageUrls: List<String>.from(json['imageUrls'] ?? []),
       receiveUpdates: json['receiveUpdates'] ?? false,
       timestamp: (json['timestamp'] as Timestamp).toDate(),
+      agency: json['agency'] ?? 'Unassigned',
+      read: json['read'] ?? false,
     );
   }
 }
@@ -164,12 +221,20 @@ class Community {
   final String info;
   final GeoPoint location;
   final String title;
+  String cid;
+
+
+
 
   Community({
     required this.Resolved,
     required this.info,
     required this.location,
     required this.title,
+    required this.cid,
+
+
+
   });
 
   Map<String, dynamic> toJson() {
@@ -187,6 +252,9 @@ class Community {
       info: json['info'],
       location: json['location'],
       title: json['title'],
+      cid: json['cid'],
+
+
     );
   }
 }
@@ -200,6 +268,7 @@ class Pickup {
   final String time;
   final String userId;
   final String userName;
+  final String status;
 
   Pickup({
     required this.additionalInfo,
@@ -210,6 +279,7 @@ class Pickup {
     required this.time,
     required this.userId,
     required this.userName,
+    required this.status,
   });
 
   Map<String, dynamic> toJson() {
@@ -222,6 +292,7 @@ class Pickup {
       'time': time,
       'userId': userId,
       'userName': userName,
+      'status': status,
     };
   }
 
@@ -235,6 +306,7 @@ class Pickup {
       time: json['time'] ?? '',
       userId: json['userId'] ?? '',
       userName: json['userName'] ?? '',
+      status: json['status'] ?? '',
     );
   }
 }

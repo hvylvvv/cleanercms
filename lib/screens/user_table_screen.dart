@@ -278,7 +278,7 @@ class _UserTableScreenState extends State<UserTableScreen> {
               child:
               DataTable(
                 columnSpacing: 8.0, // Reduces space between columns
-                dataRowHeight: 40.0, // Reduces row height
+                dataRowMinHeight: 40.0, // Reduces row height
                 headingRowHeight: 40.0, // Reduces header row height
                 columns: [
                   DataColumn(

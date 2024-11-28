@@ -13,6 +13,14 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   final _firestoreService = FirestoreService();
   String _searchQuery = '';
+  String _resolvedFilter = 'All'; // Internal value for filtering
+  final Map<String, String> _resolvedDisplayMap = {
+    'All': 'All',
+    'Yes': 'Resolved', // Display "Resolved" for 'Yes'
+    'No/Not Applicable': 'Unresolved', // Display "Not Resolved" for 'No/Not Applicable'
+  };
+
+  bool _isEditMode = false; // Flag to track if the edit mode is enabled
 
   void _createNewPost() {
     Navigator.push(
@@ -32,11 +40,54 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
   }
 
+  // Function to filter the community posts based on the resolved status
+  List<Community> _filterDocuments(List<Community> documents) {
+    if (_resolvedFilter == 'All') {
+      return documents;
+    } else if (_resolvedFilter == 'Yes') {
+      return documents.where((doc) => doc.Resolved).toList();
+    } else {
+      return documents.where((doc) => !doc.Resolved).toList();
+    }
+  }
+
+  // Function to toggle the resolved status of a post
+  Future<void> _toggleResolvedStatus(String postId, bool currentResolvedStatus) async {
+    await _firestoreService.updateResolvedStatus(postId, !currentResolvedStatus); // Toggle the resolved status
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Community Posts'),
+        actions: [
+          // Edit Pencil Icon for changing resolved status
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              setState(() {
+                _isEditMode = !_isEditMode; // Toggle the edit mode when the pencil is clicked
+              });
+            },
+          ),
+          // Popup menu to select resolved status filter
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              setState(() {
+                _resolvedFilter = value;
+              });
+            },
+            itemBuilder: (BuildContext context) {
+              return _resolvedDisplayMap.keys.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(_resolvedDisplayMap[choice]!),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -82,11 +133,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No community documents found'));
                 }
-                final documents = snapshot.data!.where((doc) {
-                  return doc.title.toLowerCase().contains(_searchQuery.toLowerCase());
-                }).toList();
+                final documents = snapshot.data!
+                    .where((doc) => doc.title.toLowerCase().contains(_searchQuery.toLowerCase()))
+                    .toList();
 
-                if (documents.isEmpty) {
+                // Apply the resolved filter
+                final filteredDocuments = _filterDocuments(documents);
+
+                if (filteredDocuments.isEmpty) {
                   return Center(child: Text('No posts found'));
                 }
 
@@ -101,7 +155,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       DataColumn(label: Text('Location')),
                       DataColumn(label: Text('Resolved')),
                     ],
-                    rows: documents.map((doc) {
+                    rows: filteredDocuments.map((doc) {
                       return DataRow(cells: [
                         DataCell(
                           Container(
@@ -113,7 +167,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         ),
                         DataCell(
                           Container(
-                            width: 500,
+                            width: 400,
                             child: Wrap(
                               children: [Text(doc.info)],
                             ),
@@ -129,12 +183,28 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         ),
                         DataCell(
-                          Container(
-                            width: 90,
-                            child: Wrap(
-                              children: [Text(doc.Resolved ? 'Yes' : 'No/Not Applicable')],
-                            ),
-                          ),
+                          // Show the dropdown only when the edit mode is enabled
+                          _isEditMode
+                              ? DropdownButton<String>(
+                            value: doc.Resolved ? 'Resolved' : 'Unresolved',
+                            items: [
+                              DropdownMenuItem<String>(
+                                value: 'Resolved',
+                                child: Text('Resolved'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Unresolved',
+                                child: Text('Unresolved'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                // Toggle the resolved status when the dropdown selection changes
+                                _toggleResolvedStatus(doc.cid, doc.Resolved);
+                              }
+                            },
+                          )
+                              : Text(doc.Resolved ? 'Resolved' : 'Unresolved'),
                         ),
                       ]);
                     }).toList(),
