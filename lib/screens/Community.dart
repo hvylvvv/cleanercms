@@ -1,7 +1,9 @@
 import 'package:cleanercms/screens/new_post_screen.dart';
 import 'package:cleanercms/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -55,6 +57,66 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Future<void> _toggleResolvedStatus(String postId, bool currentResolvedStatus) async {
     await _firestoreService.updateResolvedStatus(postId, !currentResolvedStatus); // Toggle the resolved status
   }
+
+  // Function to delete a community post
+  Future<void> _deletePost(String postId) async {
+    await _firestoreService.deleteCommunityPost(postId);
+  }
+
+  void _openEditPopup(Community doc) {
+    final titleController = TextEditingController(text: doc.title);
+    final infoController = TextEditingController(text: doc.info);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Post'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Title'),
+              ),
+              TextField(
+                controller: infoController,
+                decoration: InputDecoration(labelText: 'Info'),
+              ),
+              // You can add other fields if needed
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Close the dialog without saving
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Save the updated data to Firestore
+                await _saveEditedPost(doc.cid, titleController.text, infoController.text);
+                // Close the dialog
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _saveEditedPost(String postId, String updatedTitle, String updatedInfo) async {
+    await _firestoreService.updateCommunityPost(postId, updatedTitle, updatedInfo);
+  }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +216,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       DataColumn(label: Text('Info')),
                       DataColumn(label: Text('Location')),
                       DataColumn(label: Text('Resolved')),
+                      DataColumn(label: Text('       Actions')),
                     ],
                     rows: filteredDocuments.map((doc) {
                       return DataRow(cells: [
@@ -206,6 +269,30 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           )
                               : Text(doc.Resolved ? 'Resolved' : 'Unresolved'),
                         ),
+
+                      DataCell(
+                        Row(
+                          children: [
+                            Text('    '),
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                // Handle Edit action (you can navigate to an Edit page or toggle edit mode)
+                                print('Edit Post: ${doc.title}');
+                                _openEditPopup(doc);
+                              },
+                            ),
+
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                // Handle Delete action
+                                _deletePost(doc.cid);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                       ]);
                     }).toList(),
                   ),

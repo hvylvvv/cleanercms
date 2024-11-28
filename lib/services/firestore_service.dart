@@ -86,6 +86,10 @@ class FirestoreService {
   }
 
 
+  Future<void> deleteCommunityPost(String cid) async {
+    return await FirebaseFirestore.instance.collection('community posts').doc(cid).delete();
+  }
+
   Future<void> deleteUser(String userId) async {
     return await FirebaseFirestore.instance.collection('users').doc(userId).delete();
   }
@@ -124,6 +128,32 @@ class FirestoreService {
       print("Error updating pickup status: $e");
     }
   }
+
+  // Future<void> updateCommunityPost(Community community) async {
+  //   try {
+  //     await _db.collection('community posts').doc(community.cid).update({
+  //       'title': community.title,
+  //       'info': community.info,
+  //       'resolved': community.Resolved,
+  //       // Don't update location unless you want to
+  //     });
+  //   } catch (e) {
+  //     print("Error updating community post: $e");
+  //   }
+  // }
+
+  Future<void> updateCommunityPost(String postId, String updatedTitle, String updatedInfo) async {
+    try {
+      await FirebaseFirestore.instance.collection('community posts').doc(postId).update({
+        'title': updatedTitle,
+        'info': updatedInfo,
+        // You can add more fields here as needed
+      });
+    } catch (e) {
+      print('Error updating post: $e');
+    }
+  }
+
 
 
 }
